@@ -8,6 +8,10 @@ import com.seveneleven.service.ProfileService;
 import com.seveneleven.session.SessionManager;
 import com.seveneleven.model.User;
 import com.seveneleven.command.UpdateNameCommand;
+import com.seveneleven.command.ChangePasswordCommand;
+import com.seveneleven.model.Contact;
+import com.seveneleven.service.ContactService;
+import com.seveneleven.builder.ContactBuilder;
 
 public class Main {
 
@@ -81,6 +85,49 @@ public class Main {
 
             System.out.println("Profile updated successfully!");
             System.out.println("Updated Name: " + user.getName());
+            System.out.println("Enter new password");
+            password=sc.nextLine()
+            ChangePasswordCommand cmd1 = new ChangePasswordCommand(user, password);
+
+            profileService.executeCommand(cmd1);
+            ContactService contactService = new ContactService();
+
+            while (true) {
+
+                System.out.println("\n=== Add Contact ===");
+
+                System.out.print("Enter Contact Name: ");
+                 name = sc.nextLine();
+
+                System.out.print("Enter Phone Number: ");
+                String phone = sc.nextLine();
+
+                System.out.print("Enter Email Address: ");
+                 email = sc.nextLine();
+
+                System.out.print("Enter Contact Type (PERSON / ORG): ");
+                 type = sc.nextLine();
+
+                Contact contact =
+                        new ContactBuilder()
+                                .setName(name)
+                                .addPhone(phone)
+                                .addEmail(email)
+                                .setType(type)
+                                .build();
+
+                contactService.addContact(contact);
+
+                System.out.println("Contact Added Successfully!");
+
+                // Ask user if they want to add another contact
+                System.out.print("\nDo you want to add another contact? (Y/N): ");
+                String choice = sc.nextLine();
+
+                if (!choice.equalsIgnoreCase("Y")) {
+                    break;
+                }
+            }
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
