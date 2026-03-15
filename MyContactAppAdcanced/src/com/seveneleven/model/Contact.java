@@ -30,6 +30,15 @@ public abstract class Contact {
         return name;
     }
 
+    public void setName(String name) {
+
+        if(name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Invalid name");
+        }
+
+        this.name = name;
+    }
+
     public List<PhoneNumber> getPhones() {
         return phones;
     }
@@ -39,5 +48,4 @@ public abstract class Contact {
     }
 
     public abstract String getContactType();
-    
 }

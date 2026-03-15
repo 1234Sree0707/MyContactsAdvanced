@@ -7,6 +7,7 @@ public class ChangePasswordCommand implements ProfileCommand {
 
     private User user;
     private String newPassword;
+    private String oldPassword;
 
     public ChangePasswordCommand(User user, String newPassword) {
         this.user = user;
@@ -16,7 +17,16 @@ public class ChangePasswordCommand implements ProfileCommand {
     @Override
     public void execute() {
 
+        oldPassword = user.getPassword();
+
         String hashed = PasswordUtil.hashPassword(newPassword);
+
         user.setPassword(hashed);
+    }
+
+    @Override
+    public void undo() {
+
+        user.setPassword(oldPassword);
     }
 }

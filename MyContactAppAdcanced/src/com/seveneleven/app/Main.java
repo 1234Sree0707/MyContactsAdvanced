@@ -2,6 +2,7 @@ package com.seveneleven.app;
 
 import java.util.Scanner;
 import com.seveneleven.view.*;
+import com.seveneleven.command.*;
 
 import com.seveneleven.service.UserService;
 import com.seveneleven.service.AuthService;
@@ -139,6 +140,61 @@ public class Main {
 
             System.out.println("\n=== Contact Details ===");
             System.out.println(view.display());
+            CommandManager manager = new CommandManager();
+
+            while (true) {
+
+                System.out.println("\n=== Edit Contact Menu ===");
+                System.out.println("1. Edit Contact Name");
+                System.out.println("2. Undo Last Edit");
+                System.out.println("3. Redo Last Edit");
+                System.out.println("4. Exit");
+
+                System.out.print("Choose option: ");
+                int choice = sc.nextInt();
+                sc.nextLine();
+
+                switch (choice) {
+
+                    case 1:
+
+                        System.out.print("Enter new name: ");
+                        String newName1 = sc.nextLine();
+
+                        EditContactCommand cmd2 = new EditContactCommand(contact, newName1);
+
+                        manager.executeCommand(cmd2);
+
+                        System.out.println("Contact name updated: " + contact.getName());
+
+                        break;
+
+                    case 2:
+
+                        manager.undo();
+
+                        System.out.println("Undo performed. Current name: " + contact.getName());
+
+                        break;
+
+                    case 3:
+
+                        manager.redo();
+
+                        System.out.println("Redo performed. Current name: " + contact.getName());
+
+                        break;
+
+                    case 4:
+
+                        System.out.println("Exiting edit menu...");
+                        return;
+
+                    default:
+
+                        System.out.println("Invalid option.");
+                }
+            }
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());

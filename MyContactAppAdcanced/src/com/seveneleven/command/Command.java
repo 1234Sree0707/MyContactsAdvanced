@@ -1,6 +1,8 @@
 package com.seveneleven.command;
 
-public interface ProfileCommand {
+public interface Command {
+
     void execute();
+
     void undo();
 }
