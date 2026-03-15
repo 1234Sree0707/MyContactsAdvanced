@@ -1,11 +1,13 @@
 package com.seveneleven.app;
 
 import java.util.Scanner;
+import com.seveneleven.view.*;
 
 import com.seveneleven.service.UserService;
 import com.seveneleven.service.AuthService;
 import com.seveneleven.service.ProfileService;
 import com.seveneleven.session.SessionManager;
+import com.seveneleven.view.ContactViewImpl;
 import com.seveneleven.model.User;
 import com.seveneleven.command.UpdateNameCommand;
 import com.seveneleven.command.ChangePasswordCommand;
@@ -86,11 +88,12 @@ public class Main {
             System.out.println("Profile updated successfully!");
             System.out.println("Updated Name: " + user.getName());
             System.out.println("Enter new password");
-            password=sc.nextLine()
+            password=sc.nextLine();
             ChangePasswordCommand cmd1 = new ChangePasswordCommand(user, password);
 
             profileService.executeCommand(cmd1);
             ContactService contactService = new ContactService();
+            Contact contact;
 
             while (true) {
 
@@ -108,7 +111,7 @@ public class Main {
                 System.out.print("Enter Contact Type (PERSON / ORG): ");
                  type = sc.nextLine();
 
-                Contact contact =
+                 contact =
                         new ContactBuilder()
                                 .setName(name)
                                 .addPhone(phone)
@@ -127,7 +130,15 @@ public class Main {
                 if (!choice.equalsIgnoreCase("Y")) {
                     break;
                 }
+                
             }
+            ContactView view = new ContactViewImpl(contact);
+
+            view = new UpperCaseNameDecorator(view);
+            view = new MaskEmailDecorator(view);
+
+            System.out.println("\n=== Contact Details ===");
+            System.out.println(view.display());
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
