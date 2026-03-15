@@ -48,4 +48,13 @@ public abstract class Contact {
     }
 
     public abstract String getContactType();
+    private boolean deleted = false;
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 }

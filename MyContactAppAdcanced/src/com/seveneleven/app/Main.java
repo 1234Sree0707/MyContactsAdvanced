@@ -1,20 +1,15 @@
 package com.seveneleven.app;
 
 import java.util.Scanner;
-import com.seveneleven.view.*;
-import com.seveneleven.command.*;
 
-import com.seveneleven.service.UserService;
-import com.seveneleven.service.AuthService;
-import com.seveneleven.service.ProfileService;
-import com.seveneleven.session.SessionManager;
-import com.seveneleven.view.ContactViewImpl;
-import com.seveneleven.model.User;
-import com.seveneleven.command.UpdateNameCommand;
-import com.seveneleven.command.ChangePasswordCommand;
-import com.seveneleven.model.Contact;
-import com.seveneleven.service.ContactService;
 import com.seveneleven.builder.ContactBuilder;
+import com.seveneleven.command.*;
+import com.seveneleven.model.Contact;
+import com.seveneleven.model.User;
+import com.seveneleven.repository.ContactRepository;
+import com.seveneleven.service.*;
+import com.seveneleven.session.SessionManager;
+import com.seveneleven.view.*;
 
 public class Main {
 
@@ -26,12 +21,16 @@ public class Main {
         AuthService authService = new AuthService();
         ProfileService profileService = new ProfileService();
 
+        ContactRepository contactRepository = new ContactRepository();
+        ContactService contactService = new ContactService(contactRepository);
+
+        CommandManager manager = new CommandManager();
+
         try {
 
             // =========================
-            // UC1 : Register
+            // UC1: Register
             // =========================
-
             System.out.println("=== Register User ===");
 
             System.out.print("Name: ");
@@ -50,11 +49,9 @@ public class Main {
 
             System.out.println("Registration Successful!\n");
 
-
             // =========================
-            // UC2 : Login
+            // UC2: Login
             // =========================
-
             System.out.println("=== Login ===");
 
             System.out.print("Email: ");
@@ -70,11 +67,9 @@ public class Main {
                 return;
             }
 
-
             // =========================
-            // UC3 : Profile Update
+            // UC3: Profile Update
             // =========================
-
             User user = SessionManager.getInstance().getLoggedInUser();
 
             System.out.println("\n=== Profile Update ===");
@@ -83,72 +78,29 @@ public class Main {
             String newName = sc.nextLine();
 
             UpdateNameCommand cmd = new UpdateNameCommand(user, newName);
-
             profileService.executeCommand(cmd);
 
-            System.out.println("Profile updated successfully!");
             System.out.println("Updated Name: " + user.getName());
-            System.out.println("Enter new password");
-            password=sc.nextLine();
+
+            System.out.print("Enter new password: ");
+            password = sc.nextLine();
+
             ChangePasswordCommand cmd1 = new ChangePasswordCommand(user, password);
-
             profileService.executeCommand(cmd1);
-            ContactService contactService = new ContactService();
-            Contact contact;
 
+            // =========================
+            // CONTACT MENU
+            // =========================
             while (true) {
 
-                System.out.println("\n=== Add Contact ===");
-
-                System.out.print("Enter Contact Name: ");
-                 name = sc.nextLine();
-
-                System.out.print("Enter Phone Number: ");
-                String phone = sc.nextLine();
-
-                System.out.print("Enter Email Address: ");
-                 email = sc.nextLine();
-
-                System.out.print("Enter Contact Type (PERSON / ORG): ");
-                 type = sc.nextLine();
-
-                 contact =
-                        new ContactBuilder()
-                                .setName(name)
-                                .addPhone(phone)
-                                .addEmail(email)
-                                .setType(type)
-                                .build();
-
-                contactService.addContact(contact);
-
-                System.out.println("Contact Added Successfully!");
-
-                // Ask user if they want to add another contact
-                System.out.print("\nDo you want to add another contact? (Y/N): ");
-                String choice = sc.nextLine();
-
-                if (!choice.equalsIgnoreCase("Y")) {
-                    break;
-                }
-                
-            }
-            ContactView view = new ContactViewImpl(contact);
-
-            view = new UpperCaseNameDecorator(view);
-            view = new MaskEmailDecorator(view);
-
-            System.out.println("\n=== Contact Details ===");
-            System.out.println(view.display());
-            CommandManager manager = new CommandManager();
-
-            while (true) {
-
-                System.out.println("\n=== Edit Contact Menu ===");
-                System.out.println("1. Edit Contact Name");
-                System.out.println("2. Undo Last Edit");
-                System.out.println("3. Redo Last Edit");
-                System.out.println("4. Exit");
+                System.out.println("\n====== CONTACT MENU ======");
+                System.out.println("1. Add Contact");
+                System.out.println("2. View Contacts");
+                System.out.println("3. Edit Contact");
+                System.out.println("4. Undo Edit");
+                System.out.println("5. Redo Edit");
+                System.out.println("6. Delete Contact");
+                System.out.println("7. Exit");
 
                 System.out.print("Choose option: ");
                 int choice = sc.nextInt();
@@ -156,50 +108,148 @@ public class Main {
 
                 switch (choice) {
 
+                    // =========================
+                    // UC4: Add Contact
+                    // =========================
                     case 1:
 
-                        System.out.print("Enter new name: ");
-                        String newName1 = sc.nextLine();
+                        System.out.println("\n=== Add Contact ===");
 
-                        EditContactCommand cmd2 = new EditContactCommand(contact, newName1);
+                        System.out.print("Enter Contact Name: ");
+                        name = sc.nextLine();
 
-                        manager.executeCommand(cmd2);
+                        System.out.print("Enter Phone Number: ");
+                        String phone = sc.nextLine();
 
-                        System.out.println("Contact name updated: " + contact.getName());
+                        System.out.print("Enter Email Address: ");
+                        email = sc.nextLine();
+
+                        System.out.print("Enter Contact Type (PERSON / ORG): ");
+                        type = sc.nextLine();
+
+                        Contact contact =
+                                new ContactBuilder()
+                                        .setName(name)
+                                        .addPhone(phone)
+                                        .addEmail(email)
+                                        .setType(type)
+                                        .build();
+
+                        contactService.addContact(contact);
+
+                        System.out.println("Contact Added Successfully!");
 
                         break;
 
+                    // =========================
+                    // UC5: View Contact
+                    // =========================
                     case 2:
 
-                        manager.undo();
+                        System.out.println("\n=== Contact List ===");
 
-                        System.out.println("Undo performed. Current name: " + contact.getName());
+                        for (Contact c : contactRepository.getAllContacts()) {
+
+                            ContactView view = new ContactViewImpl(c);
+
+                            view = new UpperCaseNameDecorator(view);
+                            view = new MaskEmailDecorator(view);
+
+                            System.out.println(view.display());
+                            System.out.println("--------------------");
+                        }
 
                         break;
 
+                    // =========================
+                    // UC6: Edit Contact
+                    // =========================
                     case 3:
 
-                        manager.redo();
+                        System.out.print("Enter contact name to edit: ");
+                        name = sc.nextLine();
 
-                        System.out.println("Redo performed. Current name: " + contact.getName());
+                        Contact editContact = contactRepository.findByName(name);
+
+                        if (editContact == null) {
+                            System.out.println("Contact not found");
+                            break;
+                        }
+
+                        System.out.print("Enter new name: ");
+                        String newContactName = sc.nextLine();
+
+                        EditContactCommand editCmd =
+                                new EditContactCommand(editContact, newContactName);
+
+                        manager.executeCommand(editCmd);
+
+                        System.out.println("Contact updated: " + editContact.getName());
 
                         break;
 
                     case 4:
 
-                        System.out.println("Exiting edit menu...");
+                        manager.undo();
+                        System.out.println("Undo performed");
+
+                        break;
+
+                    case 5:
+
+                        manager.redo();
+                        System.out.println("Redo performed");
+
+                        break;
+
+                    // =========================
+                    // UC7: Delete Contact
+                    // =========================
+                    case 6:
+
+                        System.out.print("Enter contact name to delete: ");
+                        name = sc.nextLine();
+
+                        Contact deleteContact = contactRepository.findByName(name);
+
+                        if (deleteContact == null) {
+
+                            System.out.println("Contact not found");
+
+                        } else {
+
+                            System.out.print("Confirm delete? (Y/N): ");
+                            String confirm = sc.nextLine();
+
+                            if (confirm.equalsIgnoreCase("Y")) {
+
+                                contactService.softDelete(deleteContact);
+
+                                System.out.println("Contact deleted successfully");
+
+                            } else {
+
+                                System.out.println("Deletion cancelled");
+                            }
+                        }
+
+                        break;
+
+                    case 7:
+
+                        System.out.println("Exiting application...");
+                        sc.close();
                         return;
 
                     default:
 
-                        System.out.println("Invalid option.");
+                        System.out.println("Invalid option");
                 }
             }
 
         } catch (Exception e) {
+
             System.out.println("Error: " + e.getMessage());
         }
-
-        sc.close();
     }
 }
