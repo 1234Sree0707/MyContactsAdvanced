@@ -12,6 +12,7 @@ public abstract class User {
         this.name = name;
     }
 
+    // getters
     public String getEmail() {
         return email;
     }
@@ -22,6 +23,15 @@ public abstract class User {
 
     public String getName() {
         return name;
+    }
+
+    // setters (used in UC3)
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public abstract String getUserType();

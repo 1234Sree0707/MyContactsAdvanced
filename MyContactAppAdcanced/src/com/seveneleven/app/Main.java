@@ -1,14 +1,13 @@
 package com.seveneleven.app;
 
-
 import java.util.Scanner;
-
-import com.seveneleven.model.User;
-import com.seveneleven.service.UserService;
-
 
 import com.seveneleven.service.UserService;
 import com.seveneleven.service.AuthService;
+import com.seveneleven.service.ProfileService;
+import com.seveneleven.session.SessionManager;
+import com.seveneleven.model.User;
+import com.seveneleven.command.UpdateNameCommand;
 
 public class Main {
 
@@ -18,10 +17,15 @@ public class Main {
 
         UserService userService = new UserService();
         AuthService authService = new AuthService();
+        ProfileService profileService = new ProfileService();
 
         try {
 
-            System.out.println("Register User");
+            // =========================
+            // UC1 : Register
+            // =========================
+
+            System.out.println("=== Register User ===");
 
             System.out.print("Name: ");
             String name = sc.nextLine();
@@ -37,9 +41,14 @@ public class Main {
 
             userService.registerUser(email, password, name, type);
 
-            System.out.println("Registration Successful!");
+            System.out.println("Registration Successful!\n");
 
-            System.out.println("\nLogin");
+
+            // =========================
+            // UC2 : Login
+            // =========================
+
+            System.out.println("=== Login ===");
 
             System.out.print("Email: ");
             String loginEmail = sc.nextLine();
@@ -47,16 +56,34 @@ public class Main {
             System.out.print("Password: ");
             String loginPassword = sc.nextLine();
 
-            boolean success = authService.login(loginEmail, loginPassword);
+            boolean loginSuccess = authService.login(loginEmail, loginPassword);
 
-            if(success) {
-                System.out.println("Login Successful!");
-            } else {
-                System.out.println("Invalid Credentials");
+            if (!loginSuccess) {
+                System.out.println("Login failed. Exiting...");
+                return;
             }
 
+
+            // =========================
+            // UC3 : Profile Update
+            // =========================
+
+            User user = SessionManager.getInstance().getLoggedInUser();
+
+            System.out.println("\n=== Profile Update ===");
+
+            System.out.print("Enter new name: ");
+            String newName = sc.nextLine();
+
+            UpdateNameCommand cmd = new UpdateNameCommand(user, newName);
+
+            profileService.executeCommand(cmd);
+
+            System.out.println("Profile updated successfully!");
+            System.out.println("Updated Name: " + user.getName());
+
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
 
         sc.close();
