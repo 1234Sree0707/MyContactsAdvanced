@@ -13,6 +13,7 @@ import com.seveneleven.service.*;
 import com.seveneleven.session.SessionManager;
 import com.seveneleven.view.*;
 import com.seveneleven.search.*;
+import com.seveneleven.filter.*;
 
 public class Main {
 
@@ -106,6 +107,8 @@ public class Main {
                 System.out.println("6. Delete Contact");
                 System.out.println("7. Tag contacts");
                 System.out.println("8. Search Contacts");
+                System.out.println("9. Advanced Search");
+
                 System.out.println("9. Exit");
 
 
@@ -267,8 +270,22 @@ public class Main {
                     	List<Contact> results = contactService.searchContacts(criteria);
 
                     	results.forEach(c -> System.out.println(c.getName()));
-
+                    	
                     case 9:
+                    	System.out.println("\n=== Advanced Filter ===");
+
+                    	System.out.print("Enter tag: ");
+                    	 tag = sc.nextLine();
+
+                    	ContactFilter tagFilter = new TagFilter(tag);
+
+                    	ContactSortStrategy strategy = new SortByNameStrategy();
+
+                    	List<Contact> results1 = contactService.filterContacts(tagFilter, strategy);
+
+                    	results1.forEach(c -> System.out.println(c.getName()));
+
+                    case 10:
 
                         System.out.println("Exiting application...");
                         sc.close();

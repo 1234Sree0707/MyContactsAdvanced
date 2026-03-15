@@ -13,7 +13,7 @@ public abstract class Contact {
     private List<EmailAddress> emails;
     private LocalDateTime createdAt;
     private List<String> tags = new ArrayList<>();
-
+    private int contactCount = 0;   
 
     public Contact(UUID id, String name, List<PhoneNumber> phones,
                    List<EmailAddress> emails, LocalDateTime createdAt) {
@@ -67,5 +67,26 @@ public abstract class Contact {
 
     public List<String> getTags() {
         return tags;
+    }
+    
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    public void incrementContactCount() {
+        contactCount++;
+    }
+
+    public int getContactCount() {
+        return contactCount;
+    }
+    @Override
+    public String toString() {
+        return "Contact ID: " + id +
+               "\nName: " + name +
+               "\nPhones: " + phones +
+               "\nEmails: " + emails +
+               "\nTags: " + tags +
+               "\nCreated At: " + createdAt;
     }
 }
