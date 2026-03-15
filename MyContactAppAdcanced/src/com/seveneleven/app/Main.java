@@ -1,6 +1,8 @@
 package com.seveneleven.app;
 
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.seveneleven.builder.ContactBuilder;
 import com.seveneleven.command.*;
@@ -245,6 +247,16 @@ public class Main {
 
                         System.out.println("Invalid option");
                 }
+                System.out.println("\n=== Tag Contacts ===");
+
+                System.out.print("Enter tag name: ");
+                String tag = sc.nextLine();
+
+                List<Contact> contacts = contactRepository.getAllContacts();
+
+                contactService.tagContacts(contacts, tag);
+
+                System.out.println("Tag added successfully!");
             }
 
         } catch (Exception e) {

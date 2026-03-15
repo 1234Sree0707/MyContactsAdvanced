@@ -57,4 +57,22 @@ public class ContactService {
     public List<Contact> getAllContacts(){
         return repo.getAllContacts();
     }
+    public void tagContacts(List<Contact> contacts, String tag) {
+
+        contacts.forEach(c -> c.addTag(tag));
+
+        System.out.println("Tag '" + tag + "' added to " + contacts.size() + " contacts.");
+    }
+    public void exportContacts(List<Contact> contacts) {
+
+        System.out.println("\n=== Exported Contacts ===");
+
+        contacts.stream()
+                .filter(c -> !c.isDeleted())
+                .forEach(c -> System.out.println(
+                        c.getName() + " | " +
+                        c.getPhones() + " | " +
+                        c.getEmails()
+                ));
+    }
 }

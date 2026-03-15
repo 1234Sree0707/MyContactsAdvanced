@@ -3,6 +3,7 @@ package com.seveneleven.model;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 
 public abstract class Contact {
 
@@ -11,6 +12,8 @@ public abstract class Contact {
     private List<PhoneNumber> phones;
     private List<EmailAddress> emails;
     private LocalDateTime createdAt;
+    private List<String> tags = new ArrayList<>();
+
 
     public Contact(UUID id, String name, List<PhoneNumber> phones,
                    List<EmailAddress> emails, LocalDateTime createdAt) {
@@ -56,5 +59,13 @@ public abstract class Contact {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void addTag(String tag) {
+        tags.add(tag);
+    }
+
+    public List<String> getTags() {
+        return tags;
     }
 }
