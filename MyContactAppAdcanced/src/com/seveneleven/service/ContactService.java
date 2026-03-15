@@ -1,7 +1,6 @@
 package com.seveneleven.service;
 
 import java.util.*;
-
 import com.seveneleven.session.SessionManager;
 import com.seveneleven.model.Contact;
 import com.seveneleven.repository.ContactRepository;
@@ -9,24 +8,33 @@ import com.seveneleven.observer.ContactObserver;
 
 public class ContactService {
 
-    private ContactRepository repo = new ContactRepository();
-
+    private ContactRepository repo;
     private List<ContactObserver> observers = new ArrayList<>();
 
-    public ContactService(ContactRepository contactRepository) {
-		// TODO Auto-generated constructor stub
-	}
+    public ContactService(ContactRepository repo) {
+        this.repo = repo;
+    }
 
-	public void addContact(Contact contact) {
+    public void addContact(Contact contact) {
 
         if(SessionManager.getInstance().getLoggedInUser() == null) {
             System.out.println("Please login first");
             return;
         }
 
-        repo.add(contact);   
+        repo.add(contact);   // store contact
 
         System.out.println("Contact added: " + contact.getName());
+    }
+
+    public void softDelete(Contact contact) {
+        contact.setDeleted(true);
+        notifyObservers(contact);
+    }
+
+    public void hardDelete(Contact contact) {
+        repo.remove(contact);
+        notifyObservers(contact);
     }
 
     public void registerObserver(ContactObserver observer) {
@@ -34,45 +42,16 @@ public class ContactService {
     }
 
     private void notifyObservers(Contact contact) {
-
         for(ContactObserver obs : observers) {
             obs.onContactDeleted(contact);
         }
     }
-
-    public void softDelete(Contact contact) {
-
-        contact.setDeleted(true);
-
-        notifyObservers(contact);
-    }
-
-    public void hardDelete(Contact contact) {
-
-        repo.remove(contact);
-
-        notifyObservers(contact);
-    }
-
-    public List<Contact> getAllContacts(){
-        return repo.getAllContacts();
-    }
     public void tagContacts(List<Contact> contacts, String tag) {
 
-        contacts.forEach(c -> c.addTag(tag));
+        for (Contact c : contacts) {
+            c.addTag(tag);
+        }
 
         System.out.println("Tag '" + tag + "' added to " + contacts.size() + " contacts.");
-    }
-    public void exportContacts(List<Contact> contacts) {
-
-        System.out.println("\n=== Exported Contacts ===");
-
-        contacts.stream()
-                .filter(c -> !c.isDeleted())
-                .forEach(c -> System.out.println(
-                        c.getName() + " | " +
-                        c.getPhones() + " | " +
-                        c.getEmails()
-                ));
     }
 }

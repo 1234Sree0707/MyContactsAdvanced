@@ -27,6 +27,7 @@ public class Main {
         ContactService contactService = new ContactService(contactRepository);
 
         CommandManager manager = new CommandManager();
+        
 
         try {
 
@@ -102,7 +103,8 @@ public class Main {
                 System.out.println("4. Undo Edit");
                 System.out.println("5. Redo Edit");
                 System.out.println("6. Delete Contact");
-                System.out.println("7. Exit");
+                System.out.println("7. Tag contacts");
+                System.out.println("8. Exit");
 
                 System.out.print("Choose option: ");
                 int choice = sc.nextInt();
@@ -239,24 +241,26 @@ public class Main {
 
                     case 7:
 
+                        System.out.println("\n=== Tag Contacts ===");
+
+                        System.out.print("Enter tag name: ");
+                        String tag = sc.nextLine();
+
+                        List<Contact> contacts = contactRepository.getAllContacts();
+
+                        contactService.tagContacts(contacts, tag);
+
+                        System.out.println("Tag added successfully!");
+
+                        break;
+
+                    case 8:
+
                         System.out.println("Exiting application...");
                         sc.close();
                         return;
-
-                    default:
-
-                        System.out.println("Invalid option");
                 }
-                System.out.println("\n=== Tag Contacts ===");
-
-                System.out.print("Enter tag name: ");
-                String tag = sc.nextLine();
-
-                List<Contact> contacts = contactRepository.getAllContacts();
-
-                contactService.tagContacts(contacts, tag);
-
-                System.out.println("Tag added successfully!");
+                
             }
 
         } catch (Exception e) {
