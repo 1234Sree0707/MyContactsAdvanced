@@ -12,6 +12,7 @@ import com.seveneleven.repository.ContactRepository;
 import com.seveneleven.service.*;
 import com.seveneleven.session.SessionManager;
 import com.seveneleven.view.*;
+import com.seveneleven.search.*;
 
 public class Main {
 
@@ -104,7 +105,9 @@ public class Main {
                 System.out.println("5. Redo Edit");
                 System.out.println("6. Delete Contact");
                 System.out.println("7. Tag contacts");
-                System.out.println("8. Exit");
+                System.out.println("8. Search Contacts");
+                System.out.println("9. Exit");
+
 
                 System.out.print("Choose option: ");
                 int choice = sc.nextInt();
@@ -253,8 +256,19 @@ public class Main {
                         System.out.println("Tag added successfully!");
 
                         break;
-
                     case 8:
+                    	System.out.println("\n=== Search Contacts ===");
+
+                    	System.out.print("Enter name to search: ");
+                    	 name = sc.nextLine();
+
+                    	SearchCriteria criteria = new NameCriteria(name);
+
+                    	List<Contact> results = contactService.searchContacts(criteria);
+
+                    	results.forEach(c -> System.out.println(c.getName()));
+
+                    case 9:
 
                         System.out.println("Exiting application...");
                         sc.close();

@@ -5,6 +5,7 @@ import com.seveneleven.session.SessionManager;
 import com.seveneleven.model.Contact;
 import com.seveneleven.repository.ContactRepository;
 import com.seveneleven.observer.ContactObserver;
+import com.seveneleven.search.*;
 
 public class ContactService {
 
@@ -53,5 +54,12 @@ public class ContactService {
         }
 
         System.out.println("Tag '" + tag + "' added to " + contacts.size() + " contacts.");
+    }
+    public List<Contact> searchContacts(SearchCriteria criteria) {
+
+        return repo.getAllContacts()
+                .stream()
+                .filter(criteria::matches)
+                .toList();
     }
 }
