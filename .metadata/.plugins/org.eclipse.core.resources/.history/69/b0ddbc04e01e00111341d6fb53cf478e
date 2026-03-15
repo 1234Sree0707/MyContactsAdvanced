@@ -1,0 +1,5 @@
+package com.seveneleven.service;
+
+public class InvalidInputException {
+
+}

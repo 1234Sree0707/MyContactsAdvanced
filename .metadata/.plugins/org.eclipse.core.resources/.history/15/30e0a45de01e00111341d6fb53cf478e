@@ -1,0 +1,5 @@
+package com.seveneleven.util;
+
+public class PasswordUtil {
+
+}

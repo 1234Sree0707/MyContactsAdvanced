@@ -7,8 +7,11 @@ import com.seveneleven.model.User;
 import com.seveneleven.util.PasswordUtil;
 import com.seveneleven.util.ValidationUtil;
 import com.seveneleven.exception.InvalidInputException;
+import com.seveneleven.repository.UserRepository;
 
 public class UserService {
+
+    private UserRepository repo = new UserRepository();
 
     public User registerUser(String email, String password, String name, String type)
             throws InvalidInputException {
@@ -24,6 +27,8 @@ public class UserService {
                 .setName(name)
                 .setType(type)
                 .build();
+
+        repo.save(user);   // ← Integration point
 
         return user;
     }
