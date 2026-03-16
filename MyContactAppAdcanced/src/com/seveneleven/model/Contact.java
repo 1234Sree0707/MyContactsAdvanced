@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 public abstract class Contact {
 
@@ -12,8 +14,12 @@ public abstract class Contact {
     private List<PhoneNumber> phones;
     private List<EmailAddress> emails;
     private LocalDateTime createdAt;
-    private List<String> tags = new ArrayList<>();
-    private int contactCount = 0;   
+
+    // UC-11 change → use Set<Tag>
+    private Set<Tag> tags = new HashSet<>();
+
+    private int contactCount = 0;
+    private boolean deleted = false;
 
     public Contact(UUID id, String name, List<PhoneNumber> phones,
                    List<EmailAddress> emails, LocalDateTime createdAt) {
@@ -50,8 +56,41 @@ public abstract class Contact {
         return emails;
     }
 
-    public abstract String getContactType();
-    private boolean deleted = false;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    // =========================
+    // UC-11 TAG METHODS
+    // =========================
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    // =========================
+    // CONTACT COUNT
+    // =========================
+
+    public void incrementContactCount() {
+        contactCount++;
+    }
+
+    public int getContactCount() {
+        return contactCount;
+    }
+
+    // =========================
+    // DELETE SUPPORT
+    // =========================
 
     public boolean isDeleted() {
         return deleted;
@@ -61,27 +100,15 @@ public abstract class Contact {
         this.deleted = deleted;
     }
 
-    public void addTag(String tag) {
-        tags.add(tag);
-    }
+    // =========================
+    // TYPE
+    // =========================
 
-    public List<String> getTags() {
-        return tags;
-    }
-    
+    public abstract String getContactType();
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void incrementContactCount() {
-        contactCount++;
-    }
-
-    public int getContactCount() {
-        return contactCount;
-    }
     @Override
     public String toString() {
+
         return "Contact ID: " + id +
                "\nName: " + name +
                "\nPhones: " + phones +

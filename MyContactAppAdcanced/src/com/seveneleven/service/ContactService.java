@@ -1,7 +1,9 @@
 package com.seveneleven.service;
 
 import java.util.*;
+import com.seveneleven.factory.*;
 import com.seveneleven.session.SessionManager;
+import com.seveneleven.model.Tag;
 import com.seveneleven.model.Contact;
 import com.seveneleven.repository.ContactRepository;
 import com.seveneleven.observer.ContactObserver;
@@ -48,13 +50,13 @@ public class ContactService {
 			obs.onContactDeleted(contact);
 		}
 	}
-	public void tagContacts(List<Contact> contacts, String tag) {
+	public void tagContacts(List<Contact> contacts, String tagName) {
 
-		for (Contact c : contacts) {
-			c.addTag(tag);
-		}
+	    Tag tag = TagFactory.getTag(tagName);
 
-		System.out.println("Tag '" + tag + "' added to " + contacts.size() + " contacts.");
+	    contacts.forEach(c -> c.addTag(tag));
+
+	    System.out.println("Tag '" + tagName + "' added to " + contacts.size() + " contacts.");
 	}
 	public List<Contact> searchContacts(SearchCriteria criteria) {
 

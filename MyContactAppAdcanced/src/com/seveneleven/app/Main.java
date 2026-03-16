@@ -108,8 +108,8 @@ public class Main {
                 System.out.println("7. Tag contacts");
                 System.out.println("8. Search Contacts");
                 System.out.println("9. Advanced Search");
-
-                System.out.println("9. Exit");
+                System.out.println("9. View tagged contacts");
+                System.out.println("11. Exit");
 
 
                 System.out.print("Choose option: ");
@@ -284,8 +284,18 @@ public class Main {
                     	List<Contact> results1 = contactService.filterContacts(tagFilter, strategy);
 
                     	results1.forEach(c -> System.out.println(c.getName()));
-
+                    
                     case 10:
+                    	System.out.println("\n=== Tag Contacts ===");
+
+                    	System.out.print("Enter tag name: ");
+                    	String tagName = sc.nextLine();
+
+                    	List<Contact> contacts1 = contactRepository.getAllContacts();
+
+                    	contactService.tagContacts(contacts1, tagName);
+
+                    case 11:
 
                         System.out.println("Exiting application...");
                         sc.close();
