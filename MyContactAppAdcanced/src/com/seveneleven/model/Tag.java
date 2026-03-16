@@ -1,10 +1,11 @@
 package com.seveneleven.model;
-
+import java.util.*;
 import java.util.Objects;
 
 public class Tag {
 
     private String name;
+    private Set<Contact> contacts = new HashSet<>();
 
     public Tag(String name) {
 
@@ -38,5 +39,12 @@ public class Tag {
     @Override
     public String toString() {
         return name;
+    }
+    public void addContact(Contact contact) {
+        contacts.add(contact);
+    }
+
+    public Set<Contact> getContacts() {
+        return contacts;
     }
 }

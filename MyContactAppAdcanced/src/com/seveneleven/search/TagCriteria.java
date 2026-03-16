@@ -1,6 +1,7 @@
 package com.seveneleven.search;
 
 import com.seveneleven.model.Contact;
+import java.util.*;
 
 public class TagCriteria implements SearchCriteria {
 
@@ -15,6 +16,6 @@ public class TagCriteria implements SearchCriteria {
 
         return contact.getTags()
                 .stream()
-                .anyMatch(t -> t.toLowerCase().equals(tag));
+                .anyMatch(t -> t.getName().toLowerCase().equals(tag));
     }
 }

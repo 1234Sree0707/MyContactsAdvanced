@@ -15,8 +15,8 @@ public abstract class Contact {
     private List<EmailAddress> emails;
     private LocalDateTime createdAt;
 
-    // UC-11 change → use Set<Tag>
     private Set<Tag> tags = new HashSet<>();
+    private Set<ContactTag> contactTags = new HashSet<>();
 
     private int contactCount = 0;
     private boolean deleted = false;
@@ -59,22 +59,11 @@ public abstract class Contact {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
-    // =========================
-    // UC-11 TAG METHODS
-    // =========================
-
-    public void addTag(Tag tag) {
-        tags.add(tag);
-    }
-
     public void removeTag(Tag tag) {
         tags.remove(tag);
     }
 
-    public Set<Tag> getTags() {
-        return tags;
-    }
+   
 
     // =========================
     // CONTACT COUNT
@@ -105,6 +94,21 @@ public abstract class Contact {
     // =========================
 
     public abstract String getContactType();
+    public void addTag(Tag tag) {
+
+        ContactTag association = new ContactTag(this, tag);
+        contactTags.add(association);
+
+        tag.addContact(this);
+    }
+
+    public Set<Tag> getTags() {
+
+        return contactTags
+                .stream()
+                .map(ContactTag::getTag)
+                .collect(Collectors.toSet());
+    }
 
     @Override
     public String toString() {

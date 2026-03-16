@@ -14,6 +14,8 @@ import com.seveneleven.session.SessionManager;
 import com.seveneleven.view.*;
 import com.seveneleven.search.*;
 import com.seveneleven.filter.*;
+import com.seveneleven.factory.*;
+import com.seveneleven.model.Tag;
 
 public class Main {
 
@@ -108,8 +110,9 @@ public class Main {
                 System.out.println("7. Tag contacts");
                 System.out.println("8. Search Contacts");
                 System.out.println("9. Advanced Search");
-                System.out.println("9. View tagged contacts");
-                System.out.println("11. Exit");
+                System.out.println("10. View tagged contacts");
+                System.out.println("11. Apply tags to contacts");
+                System.out.println("12. Exit");
 
 
                 System.out.print("Choose option: ");
@@ -294,8 +297,23 @@ public class Main {
                     	List<Contact> contacts1 = contactRepository.getAllContacts();
 
                     	contactService.tagContacts(contacts1, tagName);
-
+                    	
                     case 11:
+                    	System.out.println("\n=== Apply Tag ===");
+
+                    	System.out.print("Enter contact name: ");
+                    	String name1 = sc.nextLine();
+
+                    	Contact contact1 = contactRepository.findByName(name);
+
+                    	System.out.print("Enter tag name: ");
+                    	String tagName1 = sc.nextLine();
+
+                    	Tag tag1 = TagFactory.getTag(tagName1);
+
+                    	contactService.applyTag(contact1, tag1);
+
+                    case 12:
 
                         System.out.println("Exiting application...");
                         sc.close();
